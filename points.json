@@ -1,0 +1,28 @@
+{
+  "type": "FeatureCollection",
+  "features": [{
+    "type": "Feature",
+    "properties": {
+      "name": "Null Island",
+      "population": 4000,
+      "rainfall": 500
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [4.9, 52.5]
+    }
+  },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Holland",
+        "population": 16000000,
+        "rainfall": "too much"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [4, 52]
+      }
+    }
+  ]
+}
