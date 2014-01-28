@@ -6,10 +6,9 @@ $().ready(function() {
 
   map = new OpenLayers.Map('map', {
     units: 'm',
-    projection: epsg4326,
+    projection: epsg900913,
     displayProjection: epsg4326, //Is used for displaying coordinates in appropriate CRS by MousePosition control
     // controls and layers are only here to fix ipad navigation. They break browser navigation however
-    center: new OpenLayers.LonLat(4,52),
     zoom: 10,
     controls: [
       new OpenLayers.Control.TouchNavigation({
@@ -26,7 +25,12 @@ $().ready(function() {
     ]
 
   });
-
+  map.setCenter(
+                new OpenLayers.LonLat(-71.147, 42.472).transform(
+                    new OpenLayers.Projection("EPSG:4326"),
+                    map.getProjectionObject()
+                ), 12
+            );	
   var wmsLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
       "http://vmap0.tiles.osgeo.org/wms/vmap0?", {layers: 'basic'});
 
