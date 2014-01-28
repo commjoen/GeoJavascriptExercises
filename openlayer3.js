@@ -6,12 +6,12 @@ var raster = new ol.layer.Tile({
 
 var style = new ol.style.Style({
   rules: [
-    new ol.style.Rule({
-      filter: 'renderIntent("selected")',
-      symbolizers: [
-        new ol.style.Fill({
-          color: '#ffffff',
-          opacity: 0.5
+   new ol.style.Rule({
+     filter: 'renderIntent("selected")',
+     symbolizers: [
+       new ol.style.Fill({
+         color: '#ffffff',
+         opacity: 0.5
         })
       ]
     })
@@ -59,10 +59,13 @@ var map = new ol.Map({
   renderer: ol.RendererHint.CANVAS,
   target: 'map',
   view: new ol.View2D({
+    projection: 'EPSG:4326',
     center: [4, 52],
-    zoom: 3
+    zoom: 10
   })
 });
+
+
 
 //var popup = new ol.Overlay({
 //  element: element,
