@@ -1,21 +1,35 @@
-var map, drawControls, selectControl;
+var map, drawControls, selectControl, geojsonLayer2;
+var epsg4326 = new OpenLayers.Projection('EPSG:4326');
+var epsg900913 = new OpenLayers.Projection('EPSG:900913');
+
+var lonLatHilversum = [5.1605481, 52.2315715];
+var lonLatLaapersveld = [5.18490762, 52.2115104];
 
 $().ready(function() {
-  var epsg4326 = new OpenLayers.Projection('EPSG:4326');
-  var epsg900913 = new OpenLayers.Projection('EPSG:900913');
+  map = getMapCenteredOnHilversum();
+  markLaapersVeld(map);
+  findMyself(map);
+  renderGeoJson(map);
+  drawPolygonOverYourCountry(map);
+  selectMultiplePolygons(map);
 
-  map = new OpenLayers.Map('map', {
+  map.addControl(new OpenLayers.Control.LayerSwitcher());
+  map.addControl(new OpenLayers.Control.MousePosition());
+
+  document.getElementById('noneToggle').checked = true;
+});
+
+/**
+ * Instantiate a new map object centered on lonlatHilversum with a zoomlevel of 12
+ */
+function getMapCenteredOnHilversum() {
+  var map = new OpenLayers.Map('map', {
     units: 'm',
     projection: epsg900913,
     displayProjection: epsg4326, //Is used for displaying coordinates in appropriate CRS by MousePosition control
-    // controls and layers are only here to fix ipad navigation. They break browser navigation however
     zoom: 10,
     controls: [
-      new OpenLayers.Control.TouchNavigation({
-        dragPanOptions: {
-          enableKinetic: true
-        }
-      }),
+      new OpenLayers.Control.Navigation(),
       new OpenLayers.Control.Zoom()
     ],
     layers: [
@@ -26,70 +40,84 @@ $().ready(function() {
 
   });
   map.setCenter(
-                new OpenLayers.LonLat(-71.147, 42.472).transform(
-                    new OpenLayers.Projection("EPSG:4326"),
-                    map.getProjectionObject()
-                ), 12
-            );	
-  var wmsLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
-      "http://vmap0.tiles.osgeo.org/wms/vmap0?", {layers: 'basic'});
+    new OpenLayers.LonLat(lonLatHilversum).transform(
+      new OpenLayers.Projection("EPSG:4326"),
+      map.getProjectionObject()
+    ), 12
+  );
+  return map;
+}
 
-  var icon_style = new OpenLayers.Style({'externalGraphic': 'data/icon.png',
-    'graphicWidth' :32,
-    'graphicHeight':48
+/*
+ add a marker to the map designating the location of the Laapersveld office
+ */
+function markLaapersVeld(map) {
+  addMarkerForLonLat(lonLatLaapersveld, map);
+}
+
+function addMarkerForLonLat(lonLat, map) {
+  var markerLayer = new OpenLayers.Layer.Markers( "Markers" );
+  map.addLayer(markerLayer);
+
+  var size = new OpenLayers.Size(32,48);
+  var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+  var icon = new OpenLayers.Icon('data/icon.png', size, offset);
+  markerLayer.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(lonLat).transform(
+    new OpenLayers.Projection("EPSG:4326"),
+    map.getProjectionObject()
+  ),icon));
+}
+
+/*
+ Use the geoLocation api to obtain your current location and add a marker of your location to the map
+ */
+function findMyself(map) {
+  navigator.geolocation.getCurrentPosition(function (position) {
+    addMarkerForLonLat([position.coords.longitude, position.coords.latitude], map);
+  }, function () {
+    console.log('failed to determine location');
   });
+}
 
-  var geojsonLayer = new OpenLayers.Layer.Vector("GeoJSON", {
+/**
+ * Display the contents of the regions.json file in the data dir on the map
+ */
+function renderGeoJson(map) {
+  geojsonLayer2 = new OpenLayers.Layer.Vector("GeoJSON2", {
     projection: epsg4326,
     strategies: [new OpenLayers.Strategy.Fixed()],
     protocol: new OpenLayers.Protocol.HTTP({
-      url: "./points.json",
+      url: "./regions.json",
       format: new OpenLayers.Format.GeoJSON()
-    }),
-    styleMap: icon_style
+    })
   });
+  map.addLayer(geojsonLayer2);
+}
 
-var geojsonLayer2 = new OpenLayers.Layer.Vector("GeoJSON2", {
-  projection: epsg4326,
-  strategies: [new OpenLayers.Strategy.Fixed()],
-  protocol: new OpenLayers.Protocol.HTTP({
-    url: "./regions.json",
-    format: new OpenLayers.Format.GeoJSON()
-  })
-});
-
-  var pointLayer = new OpenLayers.Layer.Vector("Point Layer");
-  var lineLayer = new OpenLayers.Layer.Vector("Line Layer");
+/*
+ Add functionality to the map to draw a polygon encompassing your country
+ */
+function drawPolygonOverYourCountry(map) {
   var polygonLayer = new OpenLayers.Layer.Vector("Polygon Layer");
-  var boxLayer = new OpenLayers.Layer.Vector("Box layer");
 
-  map.addLayers([wmsLayer, pointLayer, lineLayer, polygonLayer, boxLayer, geojsonLayer, geojsonLayer2]);
-  map.addControl(new OpenLayers.Control.LayerSwitcher());
-  map.addControl(new OpenLayers.Control.MousePosition());
-
+  map.addLayer(polygonLayer);
   drawControls = {
-      point: new OpenLayers.Control.DrawFeature(pointLayer,
-          OpenLayers.Handler.Point),
-      line: new OpenLayers.Control.DrawFeature(lineLayer,
-          OpenLayers.Handler.Path),
-      polygon: new OpenLayers.Control.DrawFeature(polygonLayer,
-          OpenLayers.Handler.Polygon),
-      box: new OpenLayers.Control.DrawFeature(boxLayer,
-          OpenLayers.Handler.RegularPolygon, {
-              handlerOptions: {
-                  sides: 4,
-                  irregular: true
-              }
-          }
-      )
+    polygon: new OpenLayers.Control.DrawFeature(polygonLayer,
+      OpenLayers.Handler.Polygon)
   };
 
   for(var key in drawControls) {
-      map.addControl(drawControls[key]);
+    map.addControl(drawControls[key]);
   }
+}
 
+/**
+ * Add functionality to select the displayed polygons on the map
+ */
+function selectMultiplePolygons(map) {
+  var vectorLayers = map.getLayersByClass("OpenLayers.Layer.Vector");
   selectControl = new OpenLayers.Control.SelectFeature(
-    [geojsonLayer, geojsonLayer2, boxLayer],
+    vectorLayers,
     {
       clickout: true, toggle: false,
       multiple: false, hover: false,
@@ -98,6 +126,7 @@ var geojsonLayer2 = new OpenLayers.Layer.Vector("GeoJSON2", {
     }
   );
   map.addControl(selectControl);
+
   var handler = {
     "featureselected": function(e) {
       console.log("selected feature " + e.feature.id);
@@ -105,13 +134,11 @@ var geojsonLayer2 = new OpenLayers.Layer.Vector("GeoJSON2", {
     "featureunselected": function(e) {
       console.log("unselected feature " + e.feature.id);
     }
+  };
+  for (var i=0; i< vectorLayers.length; i++) {
+    vectorLayers[i].events.on(handler);
   }
-
-  geojsonLayer.events.on(handler);
-  boxLayer.events.on(handler);
-  geojsonLayer2.events.on(handler);
-  document.getElementById('noneToggle').checked = true;
-});
+}
 
 function toggleControl(element) {
   for(key in drawControls) {
