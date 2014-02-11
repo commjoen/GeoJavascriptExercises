@@ -2,14 +2,14 @@ $().ready(function () {
   var map = getMapCenteredOnHilversum();
   markLaapersVeld(map);
   findMyself(map);
-  renderGeoJson(map);
+  //renderGeoJson(map);
   drawPolyGoneOverYourCountry(map);
 });
 
 function getMapCenteredOnHilversum() {
   var mapOptions = {
     center: new google.maps.LatLng(52.2315715, 5.1605481),
-    zoom: 4
+    zoom: 10
   };
   var map = new google.maps.Map(document.getElementById("map"),
     mapOptions);
@@ -111,42 +111,55 @@ function renderGeoJson(map) {
 /*
  Add functionality to the map to draw a polygon encompassing your country (you can use http://geojson.io/ for coordinates)
  */
-/**
- * todo: fix this assignment and built further based on it
- */
 function drawPolyGoneOverYourCountry(map) {
 
-  var belgiumCoords = [
-    new google.maps.LatLng(3.33984375, 51.337475662965204),
-    new google.maps.LatLng(3.6035156249999996, 51.17934297928927),
-    new google.maps.LatLng(3.93310546875, 51.23440735163461),
-    new google.maps.LatLng(4.691162109375, 51.474540439419755),
-    new google.maps.LatLng(5.811767578125, 51.13110763758015),
-    new google.maps.LatLng(5.504150390625, 50.826758482363275),
-    new google.maps.LatLng(6.207275390625, 50.534380406110806),
-    new google.maps.LatLng(5.701904296875, 49.88755653624285),
-    new google.maps.LatLng(5.833740234375, 49.61070993807422),
-    new google.maps.LatLng(4.910888671875, 49.83798245308484),
-    new google.maps.LatLng(4.921875, 50.13466432216696),
-    new google.maps.LatLng(4.339599609375, 50.07124366044474),
-    new google.maps.LatLng(3.2409667968749996, 50.6947178381929),
-    new google.maps.LatLng(3.09814453125, 50.85450904781293),
-    new google.maps.LatLng(2.79052734375, 50.764259357116465),
-    new google.maps.LatLng(2.5927734375, 51.089722918116344),
-    new google.maps.LatLng(3.33984375, 51.337475662965204)
+  var triangleCoords = [
+    new google.maps.LatLng(51.828988363669126, 4.801025390625),
+    new google.maps.LatLng(52.32526831457077, 4.801025390625),
+    new google.maps.LatLng(52.32526831457077, 6.075439453125),
+    new google.maps.LatLng(51.828988363669126, 6.075439453125),
+    new google.maps.LatLng(51.828988363669126, 4.801025390625)
   ];
-  var conquerBelgium = new google.maps.Polygon({
-    paths: belgiumCoords,
+
+  // Construct the polygon.
+  bermudaTriangle = new google.maps.Polygon({
+    paths: triangleCoords,
     strokeColor: '#FF0000',
     strokeOpacity: 0.8,
-    strokeWeight: 3,
+    strokeWeight: 2,
     fillColor: '#FF0000',
-    fillOpacity: 0.35,
-    draggable: true, // yes, it's that easy!
-    geodesic: true
+    fillOpacity: 0.35
   });
 
-  conquerBelgium.setMap(map);
+  bermudaTriangle.setMap(map);
+
+  //now to add drawing controls themselves:
+  var drawingManager = new google.maps.drawing.DrawingManager({
+    drawingMode: google.maps.drawing.OverlayType.MARKER,
+    drawingControl: true,
+    drawingControlOptions: {
+      position: google.maps.ControlPosition.TOP_CENTER,
+      drawingModes: [
+        google.maps.drawing.OverlayType.MARKER,
+        google.maps.drawing.OverlayType.CIRCLE,
+        google.maps.drawing.OverlayType.POLYGON,
+        google.maps.drawing.OverlayType.POLYLINE,
+        google.maps.drawing.OverlayType.RECTANGLE
+      ]
+    },
+    markerOptions: {
+      icon: 'data/icon.png'
+    },
+    circleOptions: {
+      fillColor: '#ffff00',
+      fillOpacity: 1,
+      strokeWeight: 5,
+      clickable: false,
+      zIndex: 1,
+      editable: true
+    }
+  });
+  drawingManager.setMap(map);
 }
 
 /**
