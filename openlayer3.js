@@ -1,3 +1,45 @@
+/**
+ * Instantiate a new map object centered on lonlatHilversum with a zoomlevel of 12
+ */
+function getMapCenteredOnHilversum() {
+
+}
+
+/*
+ add a marker to the map designating the location of the Laapersveld office
+ */
+function markLaapersVeld(map) {
+
+}
+
+/*
+ Use the geoLocation api to obtain your current location and add a marker of your location to the map
+ */
+function findMyself(map) {
+
+}
+
+/**
+ * Display the contents of the regions.json file in the data dir on the map
+ */
+function renderGeoJson(map) {
+
+}
+
+/*
+ Add functionality to the map to draw a polygon encompassing your country
+ */
+function drawPolygonOverYourCountry(map) {
+
+}
+
+/**
+ * Add functionality to select the displayed polygons on the map
+ */
+function selectMultiplePolygons(map) {
+
+}
+
 var raster = new ol.layer.Tile({
   source: new ol.source.TileJSON({
     url: 'http://api.tiles.mapbox.com/v3/mapbox.geography-class.jsonp'

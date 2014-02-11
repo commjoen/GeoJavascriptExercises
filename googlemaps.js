@@ -111,6 +111,9 @@ function renderGeoJson(map) {
 /*
  Add functionality to the map to draw a polygon encompassing your country (you can use http://geojson.io/ for coordinates)
  */
+/**
+ * todo: fix this assignment and built further based on it
+ */
 function drawPolyGoneOverYourCountry(map) {
 
   var belgiumCoords = [
