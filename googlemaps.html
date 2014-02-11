@@ -4,11 +4,25 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="geojsonconverter.js"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBoCh6-6R_GmokF6vRgu4zzDbEWls3u8I&sensor=true"></script>
+    <!-- 
+      You will need to obtain a google maps api key to do this assignment.
+      1. Go to https://cloud.google.com/console and login with your google acount, create a project
+      2. Go to the APIs tab, activate Google Maps API v3
+      3. go to Credentials
+      4. create a new browser key for public API access
+      5. Copy the key below.
+    -->
+
+    <!--
+      Please note that sensor only tells the API something about whether you want to use present GPS sensors or not.
+    -->
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmDZCSXDxRDm7gcsvDoM-kuZKYD1u9918&sensor=true"></script>
+    <script type="text/javascript" src="googlemaps.js"></script>
 
     <link rel="stylesheet" href="mapstyle.css" type="text/css" />
   </head>
   <body>
-    <div id="map" class="map"/>
+    <div id="map" class="map" ></div>
+    <div id="feedback"></div>
   </body>
 </html>
