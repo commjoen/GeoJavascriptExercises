@@ -4,6 +4,7 @@ $().ready(function () {
   findMyself(map);
   //renderGeoJson(map);
   drawPolyGoneOverYourCountry(map);
+  //didYouKnowThat(map);
 });
 
 function getMapCenteredOnHilversum() {
@@ -129,6 +130,8 @@ function drawPolyGoneOverYourCountry(map) {
     strokeWeight: 2,
     fillColor: '#FF0000',
     fillOpacity: 0.35
+    //drawable: true
+    //editable: true
   });
 
   bermudaTriangle.setMap(map);
@@ -166,9 +169,16 @@ function drawPolyGoneOverYourCountry(map) {
  * Add functionality to select the displayed polygons on the map
  */
 function selectMultiplePolygons() {
+  //we did not find the "correct multiselect" yet... So we found a creative solution:
+  //http://bseth99.github.io/projects/google-maps/01-drawing-manager-selections.html
 
 }
 
+function didYouKnowThat(map){
+  //google maps adds extra layers :)
+  var trafficLayer = new google.maps.TrafficLayer();
+  trafficLayer.setMap(map);
+}
 
 /**
  * Nice additional reads:
