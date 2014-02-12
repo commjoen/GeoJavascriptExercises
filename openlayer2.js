@@ -13,9 +13,6 @@ $().ready(function() {
   drawPolygonOverYourCountry(map);
   selectMultiplePolygons(map);
 
-  map.addControl(new OpenLayers.Control.LayerSwitcher());
-  map.addControl(new OpenLayers.Control.MousePosition());
-
   document.getElementById('noneToggle').checked = true;
 });
 
@@ -45,6 +42,10 @@ function getMapCenteredOnHilversum() {
       map.getProjectionObject()
     ), 12
   );
+
+  map.addControl(new OpenLayers.Control.LayerSwitcher());
+  map.addControl(new OpenLayers.Control.MousePosition());
+
   return map;
 }
 
