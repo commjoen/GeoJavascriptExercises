@@ -5,80 +5,11 @@ var drawControls;
 
 $().ready(function () {
   var map = getMapCenteredOnHilversum();
-//  interactions: ol.interaction.defaults().extend([selectInteraction]),
-
-
   markLaapersVeld(map);
   findMyself(map);
   renderGeoJson(map);
   drawPolygonOverYourCountry(map);
   selectMultiplePolygons(map);
-
-  var style = new ol.style.Style({
-    rules: [
-      new ol.style.Rule({
-        filter: 'renderIntent("selected")',
-        symbolizers: [
-          new ol.style.Fill({
-            color: '#ffffff',
-            opacity: 0.5
-          })
-        ]
-      })
-    ],
-    symbolizers: [
-      new ol.style.Icon({
-        url: 'data/icon.png',
-        yOffset: -22
-      }),
-      new ol.style.Fill({
-        color: '#ffffff',
-        opacity: 0.25
-      }),
-      new ol.style.Stroke({
-        color: '#6666ff'
-      })
-    ]
-  });
-
-  var vector = new ol.layer.Vector({
-    id: 'vector',
-    source: new ol.source.Vector({
-      parser: new ol.parser.GeoJSON(),
-      url: 'points.json'
-    }),
-    style: style
-  });
-
-  var selectInteraction = new ol.interaction.Select({
-//  layerFilter: function(layer) { return layer.get('id') == 'vector'; }
-  });
-
-
-  map.on('click', function(evt) {
-    map.getFeatures({
-      pixel: evt.getPixel(),
-      layers: [vector, vector2],
-      success: function(layerFeatures) {
-        var feature;
-        for (var i=0; i< layerFeatures.length; i++) {
-          feature = layerFeatures[i][0];
-          if (feature) {
-            break;
-          }
-        }
-
-        if (feature) {
-          var geometry = feature.getGeometry();
-          var coord = geometry.getCoordinates();
-//        popup.setPosition(coord);
-          $('#message').text(feature.get('name'));
-        } else {
-          $('#message').text('');
-        }
-      }
-    });
-  });
 });
 
 /**
