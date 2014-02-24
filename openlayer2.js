@@ -18,6 +18,8 @@ $().ready(function() {
 
 /**
  * Instantiate a new map object centered on lonlatHilversum with a zoomlevel of 12
+ * use http://docs.openlayers.org/library/introduction.html, 
+ * and see http://openlayers.org/dev/examples/osm-marker-popup.js as an example
  */
 function getMapCenteredOnHilversum() {
   var map = new OpenLayers.Map('map', {
@@ -51,6 +53,8 @@ function getMapCenteredOnHilversum() {
 
 /*
  add a marker to the map designating the location of the Laapersveld office
+ * see http://openlayers.org/dev/examples/osm-marker-popup.js as an example
+ * //todo, add popup via http://openlayers.org/dev/examples/osm-marker-popup.js
  */
 function markLaapersVeld(map) {
   addMarkerForLonLat(lonLatLaapersveld, map);
@@ -70,7 +74,8 @@ function addMarkerForLonLat(lonLat, map) {
 }
 
 /*
- Use the geoLocation api to obtain your current location and add a marker of your location to the map
+ * Use the geoLocation api to obtain your current location and add a marker of your location to the map
+ * See http://dev.w3.org/geo/api/spec-source.html for more details
  */
 function findMyself(map) {
   navigator.geolocation.getCurrentPosition(function (position) {
@@ -82,6 +87,7 @@ function findMyself(map) {
 
 /**
  * Display the contents of the regions.json file in the data dir on the map
+ * See http://dev.openlayers.org/releases/OpenLayers-2.11/examples/geojson.html as an example
  */
 function renderGeoJson(map) {
   geojsonLayer2 = new OpenLayers.Layer.Vector("GeoJSON2", {
@@ -97,6 +103,8 @@ function renderGeoJson(map) {
 
 /*
  Add functionality to the map to draw a polygon encompassing your country
+ * //todo: add polygon programmatically?
+ * tip, see: http://dev.openlayers.org/docs/files/OpenLayers/Control-js.html
  */
 function drawPolygonOverYourCountry(map) {
   var polygonLayer = new OpenLayers.Layer.Vector("Polygon Layer");
@@ -114,6 +122,7 @@ function drawPolygonOverYourCountry(map) {
 
 /**
  * Add functionality to select the displayed polygons on the map
+ * see http://dev.openlayers.org/releases/OpenLayers-2.13.1/examples/select-feature.html as an example
  */
 function selectMultiplePolygons(map) {
   var vectorLayers = map.getLayersByClass("OpenLayers.Layer.Vector");
