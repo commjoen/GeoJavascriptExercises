@@ -14,6 +14,8 @@ $().ready(function () {
 
 /**
  * Instantiate a new map object centered on lonlatHilversum with a zoomlevel of 12
+ * see http://ol3js.org/en/master/doc/quickstart.html 
+ * NOTE: THESE EXERCISES ARE BASED ON BETA 1, YOU CAN TRY THE BETA 2 YOURSELF IF YOU WANT TO
  */
 function getMapCenteredOnHilversum() {
   var map = new ol.Map({
@@ -42,6 +44,7 @@ function addMarkerForLonLat(lonlat, map) {
 
 /*
  add a marker to the map designating the location of the Laapersveld office
+ See http://ol3js.org/en/v3.0.0-beta.1/examples/icon.html for more details
  */
 function markLaapersVeld(map) {
   addMarkerForLonLat(lonLatLaapersveld, map);
@@ -49,6 +52,7 @@ function markLaapersVeld(map) {
 
 /*
  Use the geoLocation api to obtain your current location and add a marker of your location to the map
+ See http://dev.w3.org/geo/api/spec-source.html for more details
  */
 function findMyself(map) {
   navigator.geolocation.getCurrentPosition(function (position) {
@@ -60,6 +64,7 @@ function findMyself(map) {
 
 /**
  * Display the contents of the regions.json file in the data dir on the map
+ * See http://ol3js.org/en/v3.0.0-beta.1/examples/vector-layer.html for more details
  */
 function renderGeoJson(map) {
   var vector = new ol.layer.Vector({
@@ -97,6 +102,7 @@ function drawPolygonOverYourCountry(map) {
 
 /**
  * Add functionality to select the displayed polygons on the map
+ * it is not implemented yet in beta1, but with the masterversion: http://ol3js.org/en/master/examples/select-features.html
  */
 function selectMultiplePolygons(map) {
   var selectedStyle = [new ol.style.Style({
