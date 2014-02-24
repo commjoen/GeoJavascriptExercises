@@ -1,3 +1,5 @@
+var selectEnabled = false
+var selected = []
 var latLonHilversum = [52.2315715, 5.1605481];
 var latLonLaapersveld = [52.2115104, 5.18490762];
 
@@ -7,9 +9,6 @@ $().ready(function() {
   findMyself(map);
   renderGeoJson(map);
   drawPolygonOverYourCountry(map);
-  selectMultiplePolygons(map);
-
-  // document.getElementById('noneToggle').checked = true;
 });
 
 /**
@@ -62,9 +61,31 @@ function findMyself(map) {
 function renderGeoJson(map) {
   // Leaflet has no direct support to load GeoJSON from a URL, so using jQuery
   $.getJSON("regions.json", function(data) {
-      var geojsonLayer = new L.GeoJSON(data);
-      geojsonLayer.addTo(map)
+      geojsonGroup = new L.GeoJSON(data, { style: { color: "#FF0000" },
+        onEachFeature: multiSelectSupport
+      });
+      geojsonGroup.addTo(map)
   });
+}
+
+/**
+ * Add multiselect on GeoJson features
+ */
+function multiSelectSupport(feature, layer) {
+  layer.on("click", function(e){
+    if (selectEnabled) {
+      var layerId = geojsonGroup.getLayerId(layer)
+      if (selected.indexOf(layerId)>=0) {
+        layer.setStyle({color: "#FF0000"})
+        selected.splice(selected.indexOf(layerId), 1)
+        console.log("Deselected feature " + feature.properties.name +" "+layerId)
+      } else {
+        layer.setStyle({color: "#0000FF"})
+        selected.push(layerId)
+        console.log("Selected feature " + feature.properties.name +" "+layerId)
+      }
+    }
+  })
 }
 
 /*
@@ -97,42 +118,13 @@ function drawPolygonOverYourCountry(map) {
 
     // add to drawn items feature group
     drawnItems.addLayer(layer);
-    // or add to map directly
-    // map.addLayer(layer);
   });
-}
-
-/**
- * Add functionality to select the displayed polygons on the map
- */
-function selectMultiplePolygons(map) {
-  // No standard Leaflet functionality, add onclick handlers etc..?
-
-}
-
-function toggleControl(element) {
-  for(key in drawControls) {
-      var control = drawControls[key];
-      if(element.value == key && element.checked) {
-          control.activate();
-      } else {
-          control.deactivate();
-      }
-  }
-}
-
-function allowPan(element) {
-  var stop = !element.checked;
-  for(var key in drawControls) {
-      drawControls[key].handler.stopDown = stop;
-      drawControls[key].handler.stopUp = stop;
-  }
 }
 
 function allowSelect(element) {
   if (!element.checked) {
-    selectControl.deactivate();
+    selectEnabled = false
   } else {
-    selectControl.activate();
+    selectEnabled = true
   }
 }
