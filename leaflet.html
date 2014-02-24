@@ -17,25 +17,10 @@
     <h2>My Map</h2>
     <div id="map" class="map"></div>
     <script type="text/javascript" src="leaflet.js"></script>
-        <ul id="controlToggle">
-            <li>
-                <input type="radio" name="type" value="none" id="noneToggle"
-                       onclick="toggleControl(this);" checked="checked" />
-                <label for="noneToggle">navigate</label>
-            </li>
-            <li>
-                <input type="radio" name="type" value="polygon" id="polygonToggle" onclick="toggleControl(this);" />
-                <label for="polygonToggle">draw polygon</label>
-            </li>
-            <li>
-                <input type="checkbox" name="allow-pan" value="allow-pan" id="allowPanCheckbox" checked=true onclick="allowPan(this);" />
-                <label for="allowPanCheckbox">allow pan while drawing</label>
-            </li>
-            <li>
-                <input type="checkbox" name="allow-select" value="allow-select" id="allowSelectCheckbox" onclick="allowSelect(this);" />
-                <label for="allowSelectCheckbox">allow select</label>
-            </li>
-        </ul>
+    <p>
+        <input type="checkbox" name="allow-select" value="allow-select" id="allowSelectCheckbox" onclick="allowSelect(this);" />
+        <label for="allowSelectCheckbox">allow select</label>
+    </p>
     <div id="message">Hallo</div>
   </body>
 </html>
