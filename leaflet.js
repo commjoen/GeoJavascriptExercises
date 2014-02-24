@@ -13,6 +13,7 @@ $().ready(function() {
 
 /**
  * Instantiate a new map object centered on lonlatHilversum with a zoomlevel of 12
+ * http://leafletjs.com/reference.html#map-usage
  */
 function getMapCenteredOnHilversum() {
   var map = L.map('map')
@@ -28,7 +29,8 @@ function getMapCenteredOnHilversum() {
 }
 
 /*
- add a marker to the map designating the location of the Laapersveld office
+ * add a marker to the map designating the location of the Laapersveld office
+ * http://leafletjs.com/reference.html#marker
  */
 function markLaapersVeld(map) {
   addMarkerForLatLon(latLonLaapersveld, map);
@@ -57,6 +59,8 @@ function findMyself(map) {
 
 /**
  * Display the contents of the regions.json file in the data dir on the map
+ * Use jQuery getJSON to load json: http://api.jquery.com/jquery.getjson/
+ * http://leafletjs.com/reference.html#geojson
  */
 function renderGeoJson(map) {
   // Leaflet has no direct support to load GeoJSON from a URL, so using jQuery
@@ -68,32 +72,12 @@ function renderGeoJson(map) {
   });
 }
 
-/**
- * Add multiselect on GeoJson features
- */
-function multiSelectSupport(feature, layer) {
-  layer.on("click", function(e){
-    if (selectEnabled) {
-      var layerId = geojsonGroup.getLayerId(layer)
-      if (selected.indexOf(layerId)>=0) {
-        layer.setStyle({color: "#FF0000"})
-        selected.splice(selected.indexOf(layerId), 1)
-        console.log("Deselected feature " + feature.properties.name +" "+layerId)
-      } else {
-        layer.setStyle({color: "#0000FF"})
-        selected.push(layerId)
-        console.log("Selected feature " + feature.properties.name +" "+layerId)
-      }
-    }
-  })
-}
 
 /*
  Add functionality to the map to draw a polygon encompassing your country
+ Draw support for Leaflet: https://github.com/Leaflet/Leaflet.draw
  */
 function drawPolygonOverYourCountry(map) {
-  //Use Leaflet.Draw plugin from https://github.com/Leaflet/Leaflet.draw
-
   // Initialise the FeatureGroup to store editable layers
   var drawnItems = new L.FeatureGroup();
   map.addLayer(drawnItems);
@@ -121,6 +105,29 @@ function drawPolygonOverYourCountry(map) {
   });
 }
 
+/**
+ * Add multiselect on GeoJson features
+ * Use onEachFeature for geoJson and pass in this method to build your own custom
+ * multiselect via the on click handler of a layer. This might give some good ideas:
+ * http://leafletjs.com/examples/choropleth.html
+ */
+function multiSelectSupport(feature, layer) {
+  layer.on("click", function(e){
+    if (selectEnabled) {
+      var layerId = geojsonGroup.getLayerId(layer)
+      if (selected.indexOf(layerId)>=0) {
+        layer.setStyle({color: "#FF0000"})
+        selected.splice(selected.indexOf(layerId), 1)
+        console.log("Deselected feature " + feature.properties.name +" "+layerId)
+      } else {
+        layer.setStyle({color: "#0000FF"})
+        selected.push(layerId)
+        console.log("Selected feature " + feature.properties.name +" "+layerId)
+      }
+    }
+  })
+}
+
 function allowSelect(element) {
   if (!element.checked) {
     selectEnabled = false
@@ -128,3 +135,9 @@ function allowSelect(element) {
     selectEnabled = true
   }
 }
+
+/*
+   Some other interesting stuff are the examples on the Leaflet page and the plugins for Leaflet:
+   - http://leafletjs.com/examples.html
+   - http://leafletjs.com/plugins.html
+ */
