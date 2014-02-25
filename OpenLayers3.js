@@ -1,10 +1,13 @@
 var lonLatHilversum = [5.1605481, 52.2315715];
 var lonLatLaapersveld = [5.18490762, 52.2115104];
 
-var drawControls;
+var interactionControls;
+var epsg4326 = ol.proj.get('EPSG:4326');
+var epsg900913 = ol.proj.get('EPSG:900913');
+var map;
 
 $().ready(function () {
-  var map = getMapCenteredOnHilversum();
+  map = getMapCenteredOnHilversum();
   markLaapersVeld(map);
   findMyself(map);
   renderGeoJson(map);
@@ -22,11 +25,14 @@ function getMapCenteredOnHilversum() {
     layers: [new ol.layer.Tile({
       source: new ol.source.OSM()
     })],
-    renderer: ol.RendererHint.CANVAS,
+    renderer: 'canvas',
     target: 'map',
     view: new ol.View2D({
+      projection: epsg900913,
+      displayProjection: epsg4326,
       center: ol.proj.transform(
-        lonLatHilversum, 'EPSG:4326', 'EPSG:3857'),
+        lonLatHilversum, epsg4326, epsg900913
+      ),
       zoom: 12
     })
   });
@@ -36,7 +42,7 @@ function getMapCenteredOnHilversum() {
 function addMarkerForLonLat(lonlat, map) {
   map.addOverlay(new ol.Overlay({
     position: ol.proj.transform(
-      lonlat, 'EPSG:4326', 'EPSG:3857'
+      lonlat, epsg4326, epsg900913
     ),
     element: $('<div style="background: url(\'data/icon.png\'); width: 32px; height: 48px; margin-left: -16px;">')
   }));
@@ -69,9 +75,13 @@ function findMyself(map) {
 function renderGeoJson(map) {
   var vector = new ol.layer.Vector({
     id: 'vector',
-    source: new ol.source.Vector({
-      parser: new ol.parser.GeoJSON(),
+    projection: epsg4326,
+    source: new ol.source.VectorFile({
+      format: new ol.format.GeoJSON(),
       url: 'regions.json'
+    }),
+    style: new ol.style.Style ({
+      fill: new ol.style.Fill({color: '#ffffff'})
     })
   });
 
@@ -80,6 +90,7 @@ function renderGeoJson(map) {
 
 /*
  Add functionality to the map to draw a polygon encompassing your country
+ see: http://ol3js.org/en/master/examples/draw-features.html
  */
 function drawPolygonOverYourCountry(map) {
   var source = new ol.source.Vector({})
@@ -87,22 +98,19 @@ function drawPolygonOverYourCountry(map) {
   var vector = new ol.layer.Vector({
     source: source
   });
-// This section doesn;t work with the beta build of ol3, it should work with the master build acording to
-//  http://ol3js.org/en/master/examples/draw-features.html
-//  drawControls = {
-//    'polygon': new ol.interaction.Draw({
-//      source:  source,
-//      type: 'Polygon'
-//    })
-//  };
-//
-//  map.addInteraction(drawControls['polygon']);
-//  map.addLayer(vector);
+  interactionControls = {
+    'polygon': new ol.interaction.Draw({
+      source:  source,
+      type: 'Polygon'
+    })
+  };
+
+  map.addLayer(vector);
 }
 
 /**
  * Add functionality to select the displayed polygons on the map
- * it is not implemented yet in beta1, but with the masterversion: http://ol3js.org/en/master/examples/select-features.html
+ * See http://ol3js.org/en/master/examples/select-features.html
  */
 function selectMultiplePolygons(map) {
   var selectedStyle = [new ol.style.Style({
@@ -111,25 +119,31 @@ function selectMultiplePolygons(map) {
     })
   })];
 
-// This section doesn;t work with the beta build of ol3, it should work with the master build acording to
-//  http://ol3js.org/en/master/examples/select-features.html
-//  var select = new ol.interaction.Select({
-//    featureOverlay: new ol.FeatureOverlay({
-//      styleFunction: function(feature, resolution) {
-//        return selectedStyle;
-//      }
-//    })
-//  });
-//  map.addInteraction(select);
+  var select = new ol.interaction.Select({
+    featureOverlay: new ol.FeatureOverlay({
+      styleFunction: function(feature, resolution) {
+        return selectedStyle;
+      }
+    })
+  });
+  interactionControls['select'] = select;
 }
 
 function toggleControl(element) {
-  for(key in drawControls) {
-    var control = drawControls[key];
+  for(key in interactionControls) {
+    var control = interactionControls[key];
     if(element.value == key && element.checked) {
-      control.activate();
+      map.addInteraction(control);
     } else {
-      control.deactivate();
+      map.removeInteraction(control);
     }
+  }
+}
+
+function allowSelect(element) {
+  if (!element.checked) {
+    map.addInteraction(interactionControls['select']);
+  } else {
+    map.removeInteraction(interactionControls['select']);
   }
 }
