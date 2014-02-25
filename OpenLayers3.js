@@ -44,7 +44,7 @@ function addMarkerForLonLat(lonlat, map) {
     position: ol.proj.transform(
       lonlat, epsg4326, epsg900913
     ),
-    element: $('<div style="background: url(\'data/icon.png\'); width: 32px; height: 48px; margin-left: -16px;">')
+    element: $('<div style="background: url(\'data/icon.png\'); width: 32px; height: 48px; margin-left: -16px; margin-top: -48px;">')
   }));
 }
 
@@ -75,13 +75,13 @@ function findMyself(map) {
 function renderGeoJson(map) {
   var vector = new ol.layer.Vector({
     id: 'vector',
-    projection: epsg4326,
     source: new ol.source.VectorFile({
       format: new ol.format.GeoJSON(),
+      projection: epsg900913,
       url: 'regions.json'
     }),
     style: new ol.style.Style ({
-      fill: new ol.style.Fill({color: '#ffffff'})
+      fill: new ol.style.Fill({color: 'rgba(0, 170, 0, 0.7)'})
     })
   });
 
@@ -93,7 +93,9 @@ function renderGeoJson(map) {
  see: http://ol3js.org/en/master/examples/draw-features.html
  */
 function drawPolygonOverYourCountry(map) {
-  var source = new ol.source.Vector({})
+  var source = new ol.source.Vector({
+    projection: epsg4326
+  });
 
   var vector = new ol.layer.Vector({
     source: source
@@ -124,7 +126,8 @@ function selectMultiplePolygons(map) {
       styleFunction: function(feature, resolution) {
         return selectedStyle;
       }
-    })
+    }),
+    layers: map.getLayers()
   });
   interactionControls['select'] = select;
 }
