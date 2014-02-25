@@ -13,7 +13,9 @@ $().ready(function() {
 
 /**
  * Instantiate a new map object centered on lonlatHilversum with a zoomlevel of 12
+ * http://leafletjs.com/
  * http://leafletjs.com/reference.html#map-usage
+ * http://leafletjs.com/reference.html#map-set-methods
  */
 function getMapCenteredOnHilversum() {
   var map = L.map('map')
